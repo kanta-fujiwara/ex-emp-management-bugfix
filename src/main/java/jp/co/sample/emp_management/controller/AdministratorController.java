@@ -4,6 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -69,15 +70,23 @@ public class AdministratorController {
 	 * @return ログイン画面へリダイレクト
 	 */
 	@RequestMapping("/insert")
-	public String insert(@Validated InsertAdministratorForm form, BindingResult result) {
+	public String insert(@Validated InsertAdministratorForm form, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			return toInsert();
 		}
-
+		
 	    Administrator administrator = new Administrator();
 	    // フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
-		administratorService.insert(administrator);
+		
+		// メールアドレスの重複チェック
+		// insertしてみて成功すれば重複なし、失敗すれば重複していると判定する(アトミックな操作)
+		try {
+			administratorService.insert(administrator);
+		} catch (DuplicateKeyException e) {
+			model.addAttribute("isEmailDuplicated", true);
+			return toInsert();
+		}
 		return "redirect:/";
 	}
 
