@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import jp.co.sample.emp_management.domain.Employee;
-import jp.co.sample.emp_management.form.ShowListForm;
 
 /**
  * employeesテーブルを操作するリポジトリ.
@@ -45,15 +44,6 @@ public class EmployeeRepository {
 	@Autowired
 	private NamedParameterJdbcTemplate template;
 
-	/**
-	 * 使用するフォームオブジェクトをリクエストスコープに格納する.
-	 * 
-	 * @return フォーム
-	 */
-	public ShowListForm setUpShowListForm() {
-		return new ShowListForm();
-	}
-	
 	/**
 	 * 従業員一覧情報を入社日順で取得します.
 	 * 
