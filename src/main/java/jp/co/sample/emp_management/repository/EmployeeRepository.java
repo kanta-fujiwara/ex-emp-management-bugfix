@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import jp.co.sample.emp_management.domain.Employee;
+import jp.co.sample.emp_management.form.ShowListForm;
 
 /**
  * employeesテーブルを操作するリポジトリ.
@@ -44,6 +45,15 @@ public class EmployeeRepository {
 	@Autowired
 	private NamedParameterJdbcTemplate template;
 
+	/**
+	 * 使用するフォームオブジェクトをリクエストスコープに格納する.
+	 * 
+	 * @return フォーム
+	 */
+	public ShowListForm setUpShowListForm() {
+		return new ShowListForm();
+	}
+	
 	/**
 	 * 従業員一覧情報を入社日順で取得します.
 	 * 
@@ -82,5 +92,24 @@ public class EmployeeRepository {
 
 		String updateSql = "UPDATE employees SET dependents_count=:dependentsCount WHERE id=:id";
 		template.update(updateSql, param);
+	}
+
+	/**
+	 * 従業員を名前であいまい検索する.
+	 * 
+	 * @param name 検索する名前
+	 * @return 名前に name が含まれる従業員情報のリスト
+	 */
+	public List<Employee> findByNameLike(String name) {
+		String sql = "SELECT id,name,image,gender,hire_date,mail_address,zip_code,address,telephone,salary,characteristics,dependents_count "
+				+ "FROM employees WHERE name LIKE :namePattern ORDER BY hire_date ASC";
+		
+		String escapedName = name.replace("%", "\\%").replace("_", "\\_");
+		
+		SqlParameterSource params =
+				new MapSqlParameterSource()
+					.addValue("namePattern", "%" + escapedName + "%");
+
+		return template.query(sql, params , EMPLOYEE_ROW_MAPPER);
 	}
 }

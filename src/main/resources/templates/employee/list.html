@@ -62,9 +62,20 @@
 
 <!-- ここから上を編集する必要はありません -->
 
+				<form th:action="@{/employee/showList}" th:object="${showListForm}" class="form-inline" method="get">
+					<div class="form-group">
+						<label for="mailAddress">検索する文字列:</label>
+						<input type="text" th:field="*{search}" class="form-control" placeholder="名前">
+						<button>検索</button>
+					</div>
+				</form>
+
+				<div th:if="${employeeList.empty}">
+					1件もありませんでした。
+				</div>
 <!-- ここにモックのtable要素を貼り付けます -->
 
-				<table class="table table-striped">
+				<table th:unless="${employeeList.empty}" class="table table-striped">
 					<thead>
 						<tr>
 							<th>従業員名</th>

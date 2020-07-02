@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jp.co.sample.emp_management.domain.Employee;
+import jp.co.sample.emp_management.form.ShowListForm;
 import jp.co.sample.emp_management.form.UpdateEmployeeForm;
 import jp.co.sample.emp_management.service.EmployeeService;
 
@@ -43,12 +44,13 @@ public class EmployeeController {
 	/**
 	 * 従業員一覧画面を出力します.
 	 * 
+	 * @param form フォーム
 	 * @param model モデル
 	 * @return 従業員一覧画面
 	 */
 	@RequestMapping("/showList")
-	public String showList(Model model) {
-		List<Employee> employeeList = employeeService.showList();
+	public String showList(ShowListForm form, Model model) {
+		List<Employee> employeeList = employeeService.showList(form.getSearch());
 		model.addAttribute("employeeList", employeeList);
 		return "employee/list";
 	}
