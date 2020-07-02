@@ -51,6 +51,12 @@ public class EmployeeController {
 	@RequestMapping("/showList")
 	public String showList(ShowListForm form, Model model) {
 		List<Employee> employeeList = employeeService.showList(form.getSearch());
+		// 結果が空の場合は全件表示する.
+		if (employeeList.isEmpty()) {
+			model.addAttribute("wasEmptyResult", true);
+			employeeList = employeeService.showList(null);
+		}
+		
 		model.addAttribute("employeeList", employeeList);
 		return "employee/list";
 	}
